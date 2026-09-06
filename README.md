@@ -32,7 +32,7 @@ Our goal is to provide a high-level, signal-based workflow—no polling or bash 
 A Collection of Desktop rices that muscle-show what you are able to do using Fabric!
 
 - Example files
-  ![configs could be found under the examples/bar and examples/side-panel directories](assets/example-files-bar-showcase.png)
+  ![configs could be found under the /examples/ directory](https://wiki.ffpy.org/showcase/fabric-example-files.webp)
 - [Ax-Shell](https://github.com/axenide/Ax-Shell)
   ![](https://wiki.ffpy.org/showcase/axenide-ax-shell.webp)
 - [Tsumiki](https://github.com/rubiin/Tsumiki)
