@@ -39,6 +39,8 @@ class HyprlandWorkspaces(Workspaces):
         :param empty_scroll: scroll through empty workspaces (if found in the list), defaults to False
         :type empty_scroll: bool, optional
         """
+        super().__init__(buttons, buttons_factory, invert_scroll, **kwargs)
+
         self.connection = get_hyprland_connection()
 
         self._focus_command_template = (
