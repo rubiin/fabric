@@ -332,6 +332,9 @@ def compile_css(
 
     supports transpiling web-css like variables over to GTK's `@define-color` syntax.
 
+    multiple `:vars` blocks are supported; they get merged into one block at the
+    top of the stylesheet, with later definitions overriding earlier ones.
+
     also supports having CSS macros. syntax example:
 
     .. code-block:: css
@@ -402,12 +405,15 @@ def compile_css(
     css_output = resolve_imports(css_string)
 
     # color variables
-    match = FASS_VARS_SELECTOR_PATTERN.search(css_output)
-    css_output = (
-        f"{match.group(1)}\n\n{css_output.replace(match.group(0), '')}"
-        if match
-        else css_output
-    )
+    # merge all :vars blocks into one and move it to the top, so that
+    # variable definitions always precede their usage.
+    # in case of conflicting definitions, the last one wins.
+    vars_blocks = list(FASS_VARS_SELECTOR_PATTERN.finditer(css_output))
+    if vars_blocks:
+        merged_vars = "\n".join(block.group(1) for block in vars_blocks)
+        css_output = (
+            f"{merged_vars}\n\n{FASS_VARS_SELECTOR_PATTERN.sub('', css_output)}"
+        )
 
     # this could be preprocessed as the original value not (a translation to Gtk's syntax)
     css_output = FASS_VARS_DECL_PATTERN.sub(
