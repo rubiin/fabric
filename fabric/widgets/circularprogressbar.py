@@ -1,7 +1,8 @@
 import gi
 import math
 import cairo
-from typing import Literal, Iterable
+from typing import Literal
+from collections.abc import Iterable
 from fabric.core.service import Property
 from fabric.widgets.container import Container
 from fabric.utils.helpers import get_enum_member, clamp

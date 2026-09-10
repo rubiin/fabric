@@ -159,7 +159,7 @@ class Svg(Gtk.DrawingArea, Widget):
             self._style_compiled.encode()  # type: ignore
         ):
             logger.error("[Svg] failed to apply style, probably invalid style property")
-        self._handle.set_dpi((self.get_scale_factor() * 160))
+        self._handle.set_dpi(self.get_scale_factor() * 160)
 
         cr.save()
         cr.set_antialias(cairo.Antialias.BEST)

@@ -18,7 +18,6 @@ from typing import (
     cast,
     Literal,
     NamedTuple,
-    Union,
     TypeAlias,
     Generic,
     TypeVar,
@@ -159,14 +158,14 @@ class FormattedString:
 
     class FormatDict(dict):
         def __init__(self, *args, **kwargs):
-            super(FormattedString.FormatDict, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
 
         def __missing__(self, key):
             try:
                 rkey = eval(key, globals(), self)
             except Exception as e:
                 logger.warning(
-                    f"[FormattedString] couldn't format string expression ({key}), raised exception is\n {str(e)}"
+                    f"[FormattedString] couldn't format string expression ({key}), raised exception is\n {e!s}"
                 )
                 rkey = key.join("{}")
             return rkey
@@ -529,7 +528,7 @@ def bulk_connect(
 
 def bulk_disconnect(
     disconnectable: GObject.Object,
-    signals_or_funcs: Iterable[Union[str, Callable]],
+    signals_or_funcs: Iterable[str | Callable],
 ) -> tuple[int, ...]:
     """does the opposite of bulk_connect
 
@@ -631,7 +630,7 @@ def monitor_file(
 
 
 def cooldown(
-    cooldown_time: int | float,
+    cooldown_time: float,
     error: Callable | None = None,
     return_error: bool = False,
 ):
@@ -850,9 +849,7 @@ def get_enum_member_name(
 
     # GIR type enum...
     member_name: str | None = None
-    if _name := getattr(member, "first_value_nick", None):
-        member_name = _name
-    elif _name := getattr(member, "value_nick", None):
+    if (_name := getattr(member, "first_value_nick", None)) or (_name := getattr(member, "value_nick", None)):
         member_name = _name
 
     if not member_name and default is MISSING:
@@ -990,7 +987,7 @@ def get_gdk_rgba(color: str | Iterable[Number]) -> Gdk.RGBA:
 
 @__Deprecated__
 def get_connectables_for_kwargs(kwargs: dict[str, Callable]) -> Generator:
-    for key, value in zip(kwargs.keys(), kwargs.values()):
+    for key, value in kwargs.items():
         if key.startswith("on_"):
             yield [snake_case_to_kebab_case(key[3:]), value]
         elif key.startswith("notify_"):
