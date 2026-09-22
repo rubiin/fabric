@@ -408,12 +408,10 @@ def compile_css(
     # merge all :vars blocks into one and move it to the top, so that
     # variable definitions always precede their usage.
     # in case of conflicting definitions, the last one wins.
-    vars_blocks = list(FASS_VARS_SELECTOR_PATTERN.finditer(css_output))
-    if vars_blocks:
-        merged_vars = "\n".join(block.group(1) for block in vars_blocks)
-        css_output = (
-            f"{merged_vars}\n\n{FASS_VARS_SELECTOR_PATTERN.sub('', css_output)}"
-        )
+    merged_vars = "\n".join(block.group(1) for block in FASS_VARS_SELECTOR_PATTERN.finditer(css_output))
+    css_output = (
+        f"{merged_vars}\n\n{FASS_VARS_SELECTOR_PATTERN.sub('', css_output)}"
+    )
 
     # this could be preprocessed as the original value not (a translation to Gtk's syntax)
     css_output = FASS_VARS_DECL_PATTERN.sub(
