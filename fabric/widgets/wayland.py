@@ -64,7 +64,7 @@ class WaylandWindow(Window):
         if not (monitor := cast(Gdk.Monitor, GtkLayerShell.get_monitor(self))):
             return -1
         display = monitor.get_display() or Gdk.Display.get_default()
-        for i in range(0, display.get_n_monitors()):
+        for i in range(display.get_n_monitors()):
             if display.get_monitor(i) is monitor:
                 return i
         return -1

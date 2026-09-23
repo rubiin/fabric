@@ -256,7 +256,7 @@ class Widget(Gtk.Widget, Service):
         append: bool = False,
         add_brackets: bool = True,
     ) -> None:
-        """
+        r"""
         Set widget's stylesheet from a string
 
         :param style: the css style

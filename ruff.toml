@@ -3,8 +3,16 @@ indent-width = 4
 
 [lint]
 # ignore gi imports not begin at the top of the file
-ignore = ["E402"]
+# "I" -> stop sorting imports
+# "RET501", "PLR1711" -> don't remove explicit return statements 
+# "RUF022" -> don't rearrange __all__
+ignore = ["E402", "I", "RET501", "PLR1711", "RUF022"]
 
 [format]
 quote-style = "double"
 indent-style = "space"
+
+
+[lint.isort]
+# don't force alphabetical sorting within import blocks
+force-sort-within-sections = false 

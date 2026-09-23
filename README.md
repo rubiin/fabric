@@ -36,7 +36,7 @@ A Collection of Desktop rices that muscle-show what you are able to do using Fab
 - [Ax-Shell](https://github.com/axenide/Ax-Shell)
   ![](https://wiki.ffpy.org/showcase/axenide-ax-shell.webp)
 - [Tsumiki](https://github.com/rubiin/Tsumiki)
-  ![](https://wiki.ffpy.org/showcase/rubiin-hydepanel.webp)
+  ![](https://wiki.ffpy.org/showcase/rubiin-tsumiki.webp)
 - [Spacerice](https://github.com/SlumberDemon/dotfiles/tree/spacerice)
   ![](https://wiki.ffpy.org/showcase/slumberdemon-spacerice.webp)
 - [Fabrika - فابريكا](https://github.com/its-darsh/fabrika)

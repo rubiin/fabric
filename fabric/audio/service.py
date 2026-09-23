@@ -107,8 +107,8 @@ class AudioStream(Service):
 
     @volume.setter
     def volume(self, value: float):
-        value = 0 if value < 0 else value
-        value = self._parent.max_volume if value > self._parent.max_volume else value
+        value = max(value, 0)
+        value = min(value, self._parent.max_volume)
         self._old_vol = self._stream.props.volume
         self._stream.set_volume(int((value * self._control.get_vol_max_norm()) / 100))
         self._stream.push_volume()  # type: ignore

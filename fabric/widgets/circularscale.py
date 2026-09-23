@@ -1,7 +1,8 @@
 import gi
 import math
 import cairo
-from typing import Iterable, Literal, TypedDict
+from typing import Literal, TypedDict
+from collections.abc import Iterable
 from fabric.widgets.circularprogressbar import CircularProgressBar
 from fabric.utils.helpers import clamp
 

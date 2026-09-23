@@ -124,7 +124,7 @@ def list_all(json: bool = False):
         config_name: str = dbus_name.removeprefix(FABRIC_DBUS_INTERFACE_NAME + ".")
         proxy = get_instance_proxy(dbus_name)
         click.echo(
-            f"{config_name}: {str(proxy.get_cached_property('File').unpack())}"
+            f"{config_name}: {proxy.get_cached_property('File').unpack()!s}"
         ) if proxy is not None else None
     return
 

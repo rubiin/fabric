@@ -288,7 +288,7 @@ class SystemTrayItem(Service):
         """
         return snake_case_to_kebab_case(
             pascal_case_to_snake_case(
-                (self.do_get_proxy_property("Category") or "Unknown")
+                self.do_get_proxy_property("Category") or "Unknown"
             )
         )
 

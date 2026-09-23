@@ -13,15 +13,13 @@ from typing import (
     overload,
     Concatenate,
     ParamSpec,
-    Generator,
-    Optional,
     Generic,
     TypeVar,
     Literal,
-    Union,
     Self,
     Any,
 )
+from collections.abc import Generator
 from fabric.utils.helpers import (
     get_enum_member,
     snake_case_to_kebab_case,
@@ -68,35 +66,16 @@ class Property(OldProperty, Generic[T]):
     def __init__(
         self,
         type: type[T],
-        flags: Union[
-            Literal[
-                "r",
-                "w",
-                "rw",
-                "readable",
-                "writable",
-                "read-write",
-                "construct",
-                "construct-only",
-                "lax-validation",
-                "static-name",
-                "private",
-                "static-nick",
-                "static-blurb",
-                "explicit-notify",
-                "deprecated",
-            ],
-            GObject.ParamFlags,
-        ] = GObject.ParamFlags.READWRITE,
-        nickname: Optional[str] = None,
+        flags: Literal["r", "w", "rw", "readable", "writable", "read-write", "construct", "construct-only", "lax-validation", "static-name", "private", "static-nick", "static-blurb", "explicit-notify", "deprecated"] | GObject.ParamFlags = GObject.ParamFlags.READWRITE,
+        nickname: str | None = None,
         description: str = "",
         # boolean types
-        default_value: Optional[T] = None,
+        default_value: T | None = None,
         # int types
-        minimum: Optional[int] = None,
-        maximum: Optional[int] = None,
-        getter: Optional[Callable] = None,
-        setter: Optional[Callable] = None,
+        minimum: int | None = None,
+        maximum: int | None = None,
+        getter: Callable | None = None,
+        setter: Callable | None = None,
         install: bool = True,
         **kwargs,
     ):
@@ -230,22 +209,22 @@ class Property(OldProperty, Generic[T]):
             prop = getattr(klass, kebab_case_to_snake_case(pspec.name), None)
             prop.fset(self, value) if prop is not None else None
 
-        setattr(klass, "do_get_property", property_do_get)
-        setattr(klass, "do_set_property", property_do_set)
-        setattr(klass, "__gproperties__", klass_properties)
+        klass.do_get_property = property_do_get
+        klass.do_set_property = property_do_set
+        klass.__gproperties__ = klass_properties
 
 
 @dataclass
 class SignalWrapper(Generic[G, P, R]):
     name: str
     instance: G
-    func: Optional[Callable[Concatenate[G, P], R]] = None
+    func: Callable[Concatenate[G, P], R] | None = None
 
-    def __call__(self, /, *args: P.args, **kwargs: P.kwargs) -> Optional[R]:
+    def __call__(self, /, *args: P.args, **kwargs: P.kwargs) -> R | None:
         return self.emit(*args, **kwargs)
 
-    def emit(self, /, *args: P.args, **kwargs: P.kwargs) -> Optional[R]:
-        rvalue: Optional[R] = (
+    def emit(self, /, *args: P.args, **kwargs: P.kwargs) -> R | None:
+        rvalue: R | None = (
             self.func(self.instance, *args, **kwargs) if self.func is not None else None
         )
         self.instance.emit(self.name, *args, **kwargs)  # type: ignore
@@ -275,26 +254,12 @@ class Signal(Generic[G, P, R]):
     install: bool = True
 
     # private, kinda
-    func: Optional[Callable[Concatenate[G, P], R]] = None
+    func: Callable[Concatenate[G, P], R] | None = None
 
     def __init__(
         self,
-        name: Union[str, Callable[Concatenate[G, P], R]],
-        flags: Union[
-            Literal[
-                "run-last",
-                "run-first",
-                "run-cleanup",
-                "no-recurse",
-                "detailed",
-                "action",
-                "no-hooks",
-                "must-collect",
-                "deprecated",
-                "accumulator-first-run",
-            ],
-            GObject.SignalFlags,
-        ] = GObject.SignalFlags.RUN_FIRST,
+        name: str | Callable[Concatenate[G, P], R],
+        flags: Literal["run-last", "run-first", "run-cleanup", "no-recurse", "detailed", "action", "no-hooks", "must-collect", "deprecated", "accumulator-first-run"] | GObject.SignalFlags = GObject.SignalFlags.RUN_FIRST,
         rtype: Any = None,
         arg_types: tuple = (),
         install: bool = True,
@@ -381,7 +346,7 @@ class Signal(Generic[G, P, R]):
                 setattr(klass, fname, signal.func)
 
         # all aboard...
-        setattr(klass, "__gsignals__", klass_signals)
+        klass.__gsignals__ = klass_signals
         return
 
 
@@ -418,7 +383,8 @@ class Service(GObject.Object, Generic[P, T]):
         :param **kwargs: mapped to signal connections (e.g. `on_clicked=lambda *_: ...` connects the given function to the signal "clicked", `notify_my_property=my_func` connects the given function to the signal "notify::my-property")
         """
         super().__init__(**self.filter_kwargs(kwargs))
-        self._builder: Optional[Builder] = None
+
+        self._builder: Builder | None = None
         self.do_connect_kwargs(kwargs)
 
     @overload
@@ -441,14 +407,10 @@ class Service(GObject.Object, Generic[P, T]):
 
     def build(
         self,
-        callback: Optional[
-            Callable[Concatenate[Self, Builder[Self], P], Any]
-            | Callable[Concatenate[Self, P], Any]
-            | Callable[P, Any]
-        ] = None,
+        callback: Callable[Concatenate[Self, Builder[Self], P], Any] | Callable[Concatenate[Self, P], Any] | Callable[P, Any] | None = None,
         *args: P.args,
         **kwargs: P.kwargs,
-    ) -> Union[Builder[Self], Self]:
+    ) -> Builder[Self] | Self:
         """Get an instance of a `Builder` that holds a reference to this service
 
         Builders enable you of doing extra configuration after the initialization
@@ -542,7 +504,7 @@ class Service(GObject.Object, Generic[P, T]):
     def get_connectables_for_kwargs(
         kwargs: dict[str, Any],
     ) -> Generator[tuple[str, Callable[..., Any]], None, None]:
-        for key, value in zip(kwargs.keys(), kwargs.values()):
+        for key, value in kwargs.items():
             if key.startswith("on_"):
                 yield snake_case_to_kebab_case(key[3:]), value
             elif key.startswith("notify_"):

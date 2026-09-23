@@ -207,8 +207,8 @@ class X11Window(Window):
         self._scale_factor: int
 
         # for extra functionality
-        self._xdisplay: "XDisplay | None" = None
-        self._xwindow: "XWindow | None" = None
+        self._xdisplay: XDisplay | None = None
+        self._xwindow: XWindow | None = None
         self._xid: int = 0
 
         self.set_type_hint(
